@@ -1,0 +1,27 @@
+.contacts {
+    &__title {
+    }
+
+    &__list {
+    }
+
+    &__item {
+        & + & {
+            // margin-top: 16px;
+            margin-top: 24px;
+
+            @include tablet {
+                // margin-top: 21px;
+                margin-top: 16px;
+            }
+            @include mobile {
+                margin-top: 9px;
+            }
+        }
+
+        // 16 16 21 9
+    }
+
+    &__link {
+    }
+}

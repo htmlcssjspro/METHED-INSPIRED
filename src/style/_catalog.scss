@@ -1,0 +1,52 @@
+.catalog {
+    & {
+    }
+
+    &__main {
+        &-title {
+        }
+
+        &-list {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 24px;
+
+            @include tablet {
+                flex-direction: column;
+                gap: 7px;
+                margin-top: 16px;
+            }
+            @include mobile {
+                margin-top: 8px;
+            }
+        }
+
+        &-item {
+        }
+    }
+
+    &__title {
+        font-size: 14px;
+        font-weight: 600;
+
+        @include tablet {
+            font-size: 12px;
+        }
+    }
+
+    &__list {
+        margin-top: 10px;
+
+        @include tablet {
+            display: none;
+        }
+    }
+
+    &__item {
+        & + & {
+            margin-top: 6px;
+        }
+    }
+}

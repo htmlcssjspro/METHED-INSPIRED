@@ -1,11 +1,9 @@
 .header {
     & {
-        margin-top: 24px;
-        // margin-bottom: 36px;
+        padding-top: 24px;
 
         @include tablet {
-            margin-top: 16px;
-            // margin-bottom: 16px;
+            padding-top: 16px;
         }
     }
 

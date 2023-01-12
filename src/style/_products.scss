@@ -1,0 +1,54 @@
+.products {
+    & {
+        margin-top: 80px;
+    }
+
+    @include tablet {
+        margin-top: 64px;
+    }
+    @include mobile {
+        margin-top: 24px;
+    }
+
+    &__title {
+        padding-bottom: 24px;
+        border-bottom: 1px solid $gray-light;
+        font-size: 32px;
+        font-weight: 400;
+        text-align: center;
+        text-transform: uppercase;
+
+        @include tablet {
+            padding-bottom: 15px;
+            font-size: 24px;
+        }
+        @include mobile {
+            padding-bottom: 8px;
+            font-size: 18px;
+        }
+    }
+
+    &__list {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 40px 20px;
+        margin-top: 40px;
+
+        @include laptop {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        @include tablet {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px 20px;
+            margin-top: 24px;
+        }
+        @include mobile {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px 10px;
+            margin-top: 16px;
+        }
+    }
+
+    &__item {
+    }
+}

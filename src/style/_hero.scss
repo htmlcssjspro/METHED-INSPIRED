@@ -1,27 +1,98 @@
 .hero {
     & {
-        margin-top: 50px;
-
-        @include laptop {
-            margin-top: 38px;
-        }
-        @include tablet {
-            margin-top: 31px;
-        }
-        @include mobile {
-            margin-top: 19px;
-        }
+        max-width: 1440px;
+        margin: 0 auto;
+        color: $white;
     }
 
-    &_woman {
+    &_women {
+        background: url(../img/hero-women.jpg) right / cover $gray-dark;
+
+        @include laptop {
+            background-image: url(../img/hero-women-laptop.jpg);
+        }
+        @include tablet {
+            background-image: url(../img/hero-women-tablet.jpg);
+        }
+        @include media-max(320px) {
+            background-image: url(../img/hero-women-mobile.jpg);
+        }
+    }
+    &_men {
+        background: url(../img/hero-men.jpg) right / cover $gray-dark;
+
+        @include laptop {
+            background-image: url(../img/hero-men-laptop.jpg);
+        }
+        @include tablet {
+            background-image: url(../img/hero-men-tablet.jpg);
+        }
+        @include media-max(320px) {
+            background-image: url(../img/hero-men-mobile.jpg);
+        }
     }
 
     &__content {
+        position: relative;
+        height: 450px;
+        // padding-top: 172px;
+        // padding-bottom: 86px;
+
+        @include tablet {
+            height: 338px;
+            // padding-top: 156px;
+            // padding-bottom: 50px;
+        }
+        @include mobile {
+            height: 200px;
+            // padding-top: 76px;
+            // padding-bottom: 50px;
+        }
     }
 
     &__title {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 44px;
+        text-transform: uppercase;
+
+        @include tablet {
+            font-size: 30px;
+        }
+        @include mobile {
+            font-size: 20px;
+        }
     }
 
     &__link {
+        position: absolute;
+        left: 0;
+        bottom: 86px;
+        display: block;
+        width: fit-content;
+        padding: 1em 3em;
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        border: 1px solid $white;
+        background-color: transparent;
+        transition-property: background-color, border-color;
+        transition-timing-function: ease-in-out;
+        transition-duration: 0.2s;
+
+        &:hover {
+            background-color: $gray-dark;
+            border-color: $gray-dark;
+        }
+
+        @include tablet {
+            bottom: 60px;
+            font-size: 10px;
+        }
+        @include mobile {
+            bottom: 24px;
+        }
     }
 }
