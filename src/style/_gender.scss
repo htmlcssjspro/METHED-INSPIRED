@@ -1,0 +1,33 @@
+.gender {
+    & {
+        display: flex;
+        font-size: 18px;
+        text-transform: uppercase;
+
+        @include tablet {
+            font-size: 16px;
+        }
+        @include mobile {
+            font-size: 14px;
+        }
+    }
+
+    &__list {
+    }
+    &__item {
+        flex-basis: 50%;
+    }
+    &__link {
+        display: block;
+        padding: 16px;
+
+        text-align: center;
+        border-bottom: 1px solid $gray-light;
+        user-select: none;
+
+        &.active {
+            border-color: $main-color;
+            pointer-events: none;
+        }
+    }
+}

@@ -1,0 +1,27 @@
+.hero {
+    & {
+        margin-top: 50px;
+
+        @include laptop {
+            margin-top: 38px;
+        }
+        @include tablet {
+            margin-top: 31px;
+        }
+        @include mobile {
+            margin-top: 19px;
+        }
+    }
+
+    &_woman {
+    }
+
+    &__content {
+    }
+
+    &__title {
+    }
+
+    &__link {
+    }
+}

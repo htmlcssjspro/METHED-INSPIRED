@@ -1,0 +1,54 @@
+.category {
+    & {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 12px;
+        font-size: 14px;
+        text-transform: uppercase;
+
+        @include tablet {
+            margin-top: 11px;
+            font-size: 12px;
+        }
+        @include mobile {
+            justify-content: flex-start;
+            font-size: 10px;
+        }
+    }
+
+    &__item {
+    }
+    &__link {
+        position: relative;
+        padding: 12px;
+
+        @include tablet {
+            padding: 5px;
+        }
+
+        &.active {
+            pointer-events: none;
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 26px;
+                height: 2px;
+                background-color: $main-color;
+
+                @include tablet {
+                    width: 20px;
+                    height: 1px;
+                }
+            }
+        }
+    }
+    &__list {
+    }
+    &__title {
+    }
+}

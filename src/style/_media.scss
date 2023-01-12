@@ -1,0 +1,27 @@
+@mixin media-max($width) {
+    @media (max-width: $width) {
+        @content;
+    }
+}
+
+$laptop: 1024px;
+$tablet: 768px;
+$mobile: 540px;
+
+@mixin laptop {
+    @include media-max($laptop) {
+        @content;
+    }
+}
+
+@mixin tablet {
+    @include media-max($tablet) {
+        @content;
+    }
+}
+
+@mixin mobile {
+    @include media-max($mobile) {
+        @content;
+    }
+}

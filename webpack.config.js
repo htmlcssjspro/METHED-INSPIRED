@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-// const CopyPlugin = require('copy-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const mode = process.env.NODE_ENV || 'development';
 const devMode = mode === 'development';
@@ -31,9 +31,9 @@ module.exports = {
         new MiniCssExtractPlugin({
             filename: '[name].[contenthash].css',
         }),
-    // new CopyPlugin({
-    //   patterns: [{ from: 'static', to: './' }],
-    // }),
+        new CopyPlugin({
+            patterns: [{ from: 'root', to: './' }],
+        }),
     ],
     module: {
         rules: [
@@ -74,8 +74,17 @@ module.exports = {
                 },
             },
             {
-                test: /\.(jpe?g|png|webp|gif|svg)$/i,
-                use:  devMode
+                test:      /\.(png|svg|webmanifest)$/i,
+                include:   path.resolve(__dirname, 'src', 'favicon'),
+                type:      'asset/resource',
+                generator: {
+                    filename: 'favicon/[name][ext]',
+                },
+            },
+            {
+                test:    /\.(jpe?g|png|webp|gif|svg)$/i,
+                exclude: path.resolve(__dirname, 'src', 'favicon'),
+                use:     devMode
                     ? []
                     : [
                         {
