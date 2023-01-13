@@ -84,4 +84,4 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v1
         with:
-          folder: build # The folder the action should deploy.
+          folder: dist # The folder the action should deploy.
