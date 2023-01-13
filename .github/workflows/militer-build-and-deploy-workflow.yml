@@ -64,10 +64,10 @@ jobs:
       #     source: ./
       #     destination: ./_site
 
-      # - name: Upload artifact
-      #   uses: actions/upload-pages-artifact@v1
-      #   with:
-      #     path: "./dist"
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: "./dist"
 
   # Deploy job
   deploy:
@@ -83,5 +83,5 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
-        with:
-          folder: dist # The folder the action should deploy.
+        # with:
+          # folder: dist # The folder the action should deploy.
