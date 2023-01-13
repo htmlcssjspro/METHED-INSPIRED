@@ -1,9 +1,7 @@
 .footer {
     & {
         margin-top: 120px;
-        padding-top: 50px;
-        padding-bottom: 24px;
-        border-top: 1px solid $gray-light;
+
         font-size: 14px;
         font-weight: 400;
 
@@ -22,30 +20,28 @@
     &__container {
         display: grid;
         grid-template:
-            'category social social contacts' auto
-            'copyright . . developer' auto
-            / 1fr 1fr 1fr 1fr;
+            'category social contacts'
+            'copyright . developer'
+            / 1fr 2fr 1fr;
         gap: 24px 20px;
 
+        padding-top: 50px;
+        padding-bottom: 24px;
+        border-top: 1px solid $gray-light;
+
         @include laptop {
-            grid-template:
-                'category social contacts' auto
-                'copyright . developer' auto
-                / 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
         }
         @include tablet {
-            grid-template:
-                'category social social contacts' auto
-                'copyright . . developer' auto
-                / 1fr 1fr 1fr 1fr;
+            grid-template-columns: 1fr 2fr 1fr;
         }
         @include mobile {
             grid-template:
-                'category social social' auto
-                'contacts contacts .' auto
-                'developer developer .' auto
-                'copyright copyright .' auto
-                / 1fr 1fr 1fr;
+                'category social'
+                'contacts contacts'
+                'developer developer'
+                'copyright copyright'
+                / 1fr 1.5fr;
             column-gap: 10px;
         }
     }

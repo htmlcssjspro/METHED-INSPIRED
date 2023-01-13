@@ -9,6 +9,11 @@
 
     &__link {
         display: block;
+        transition: color 0.2s ease-in-out;
+
+        &:hover {
+            color: $gray;
+        }
     }
 
     &__img {
@@ -20,15 +25,18 @@
         font-weight: 400;
 
         @include tablet {
-            margin-top: 10px;
+            // margin-top: 10px;
+            margin-top: 12px;
         }
     }
 
     &__footer {
-        margin-top: 16px;
+        // margin-top: 12px;
+        margin-top: 14px;
 
         @include tablet {
-            margin-top: 10px;
+            // margin-top: 10px;
+            margin-top: 12px;
         }
     }
 
@@ -43,16 +51,25 @@
 
     &__favorite {
         color: $black;
+        transition: color 0.2s ease-in-out;
+
+        &:hover {
+            color: $red;
+        }
 
         &_active {
             color: $red;
+
+            &:hover {
+                color: $black;
+            }
         }
     }
 
     &__color-list {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 3px;
         flex-wrap: wrap;
         margin-top: 19px;
 
