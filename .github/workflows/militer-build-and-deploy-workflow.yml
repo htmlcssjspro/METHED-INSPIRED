@@ -83,5 +83,5 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
-        with:
-          folder: dist # The folder the action should deploy.
+        # with:
+          # folder: dist # The folder the action should deploy.
