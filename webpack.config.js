@@ -32,7 +32,7 @@ module.exports = {
             filename: '[name].[contenthash].css',
         }),
         new CopyPlugin({
-            patterns: [{ from: 'root', to: './' }],
+            patterns: [{ from: 'static', to: './' }],
         }),
     ],
     module: {
