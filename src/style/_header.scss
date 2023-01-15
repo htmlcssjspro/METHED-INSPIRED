@@ -8,23 +8,22 @@
     }
 
     &__container {
-        display: grid;
-    }
+        &_top {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            align-items: center;
 
-    &__top {
-        grid-template-columns: repeat(3, 1fr);
-        align-items: center;
-
-        @include mobile {
-            grid-template-columns: repeat(2, 1fr);
+            @include mobile {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
-    }
 
-    &__bottom {
-        margin-top: 36px;
+        &_bottom {
+            margin-top: 36px;
 
-        @include tablet {
-            margin-top: 16px;
+            @include tablet {
+                margin-top: 16px;
+            }
         }
     }
 
@@ -32,14 +31,11 @@
         justify-self: left;
         font-size: 14px;
         font-weight: 600;
-        // line-height: 17px;
         text-transform: uppercase;
 
         @include tablet {
             font-size: 12px;
-            // line-height: 15px;
         }
-
         @include mobile {
             display: none;
         }
@@ -51,16 +47,30 @@
         @include tablet {
             max-width: 154px;
         }
-
         @include mobile {
             justify-self: start;
             max-width: 124px;
         }
     }
 
+    &__control {
+        justify-self: right;
+    }
+
+    &__nav {
+    }
+
     &__nav-list {
         display: flex;
         align-items: center;
+
+        &_control {
+            gap: 24px;
+
+            @include mobile {
+                gap: 16px;
+            }
+        }
     }
 
     &__nav-item {
@@ -72,23 +82,6 @@
 
         &:hover {
             color: $gray;
-        }
-    }
-
-    &__control {
-    }
-
-    &__nav {
-    }
-}
-
-.control {
-    justify-self: end;
-    &__nav-list {
-        gap: 24px;
-
-        @include mobile {
-            gap: 16px;
         }
     }
 }

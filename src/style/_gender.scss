@@ -25,8 +25,8 @@
         border-bottom: 1px solid $gray-light;
         user-select: none;
 
-        &.active {
-            border-color: $main-color;
+        &_active {
+            border-bottom-color: $black;
             pointer-events: none;
         }
     }
