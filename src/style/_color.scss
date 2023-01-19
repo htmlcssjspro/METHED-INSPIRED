@@ -21,20 +21,8 @@
         }
     }
 
-    &_red {
-        background-color: red;
-    }
-
-    &_black {
-        background-color: black;
-    }
-
-    &_white {
-        background-color: white;
+    &_white,
+    &_beige {
         border: 0.4px solid black;
-    }
-
-    &_brandy-rose {
-        background-color: #b67c7c;
     }
 }

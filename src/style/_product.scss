@@ -1,5 +1,8 @@
 .product {
     & {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
         font-size: 14px;
 
         @include tablet {
@@ -9,6 +12,7 @@
 
     &__link {
         display: block;
+        flex-grow: 1;
         transition: color 0.2s ease-in-out;
 
         &:hover {
@@ -17,6 +21,12 @@
     }
 
     &__img {
+        height: 370px;
+        object-fit: cover;
+
+        @include tablet {
+            height: 185px;
+        }
     }
 
     &__title {

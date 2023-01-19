@@ -1,25 +1,31 @@
-import createElement from '../create-element';
+import createElement from '../service/create-element';
 import logo from '../../img/logo.svg';
+import { router } from '../router';
+import getPathName from '../service/get-path-name';
+import { DATA } from '../const';
 
-const $headerTop = createElement('div', {
-    className: 'container header__container header__container_top',
-    innerHTML: `
+const $header = document.querySelector('.header');
+
+const renderHeaderTop = () => {
+    const $headerTop = createElement('div', {
+        className: 'container header__container header__container_top',
+        innerHTML: `
         <a class="link header__link header__phone" href="tel:+79304902620">8 930 490 26 20</a>
         <a class="link header__link header__logo" href="/" data-navigo>
             <img class="logo" src="${logo}" alt="Логотип Inspired">
         </a>
     `,
-});
+    });
 
-const $headerControl = createElement('nav', {
-    className: 'nav header__control',
-}, {
-    parent: $headerTop,
-});
+    const $headerControl = createElement('nav', {
+        className: 'nav header__control',
+    }, {
+        parent: $headerTop,
+    });
 
-const searchButton = createElement('button', {
-    className: 'heder__link search-button',
-    innerHTML: `
+    const searchButton = createElement('button', {
+        className: 'heder__link search-button',
+        innerHTML: `
         <svg width="24"
             height="24"
             viewBox="0 0 24 24"
@@ -37,12 +43,12 @@ const searchButton = createElement('button', {
                 d="M16.4431 16.4438L20.9994 21.0002" />
         </svg>
 `,
-});
+    });
 
-const cartLink = createElement('a', {
-    className: 'heder__link',
-    href:      '/cart',
-    innerHTML: `
+    const cartLink = createElement('a', {
+        className: 'heder__link',
+        href:      '/cart',
+        innerHTML: `
         <svg width="24"
             height="24"
             viewBox="0 0 24 24"
@@ -60,12 +66,12 @@ const cartLink = createElement('a', {
                 d="M8.25 6.75C8.25 5.75544 8.64509 4.80161 9.34835 4.09835C10.0516 3.39509 11.0054 3 12 3C12.9946 3 13.9484 3.39509 14.6517 4.09835C15.3549 4.80161 15.75 5.75544 15.75 6.75" />
         </svg>
 `,
-});
+    });
 
-const favoriteLink = createElement('a', {
-    className: 'heder__link',
-    href:      '/favotite',
-    innerHTML: `
+    const favoriteLink = createElement('a', {
+        className: 'heder__link',
+        href:      '/favotite',
+        innerHTML: `
         <svg width="24"
             height="24"
             viewBox="0 0 24 24"
@@ -79,24 +85,106 @@ const favoriteLink = createElement('a', {
                 d="M12 20.25C12 20.25 2.625 15 2.625 8.62501C2.62519 7.49826 3.01561 6.40635 3.72989 5.53493C4.44416 4.66351 5.4382 4.06636 6.54299 3.84501C7.64778 3.62367 8.79514 3.79179 9.78999 4.32079C10.7848 4.84979 11.5658 5.70702 12 6.74673L12 6.74673C12.4342 5.70702 13.2152 4.84979 14.21 4.32079C15.2049 3.79179 16.3522 3.62367 17.457 3.84501C18.5618 4.06636 19.5558 4.66351 20.2701 5.53493C20.9844 6.40635 21.3748 7.49826 21.375 8.62501C21.375 15 12 20.25 12 20.25Z" />
         </svg>
 `,
-});
+    });
 
-const createHeaderNavItem = (append) => createElement('li', {
-    className: 'nav__item header__nav-item',
-}, { append });
+    const createHeaderNavItem = (append) => createElement('li', {
+        className: 'nav__item header__nav-item',
+    }, { append });
 
-const $headerNavListControl = createElement('ul', {
-    className: 'nav__list header__nav-list header__nav-list_control',
-}, {
-    parent: $headerControl,
-    append: [
-        createHeaderNavItem(searchButton),
-        createHeaderNavItem(cartLink),
-        createHeaderNavItem(favoriteLink),
-    ]
-});
+    const $headerNavListControl = createElement('ul', {
+        className: 'nav__list header__nav-list header__nav-list_control',
+    }, {
+        parent: $headerControl,
+        append: [
+            createHeaderNavItem(searchButton),
+            createHeaderNavItem(cartLink),
+            createHeaderNavItem(favoriteLink),
+        ]
+    });
 
-export default function renderHeader() {
-    const $header = document.querySelector('.header');
+    return $headerTop;
+};
+
+const renderHeaderBottom = () => {
+    const $headerBottom = createElement('div', {
+        className: 'container header__container header__container_bottom',
+    });
+
+    const headerNav = createElement('nav', {
+        className: 'nav header__nav'
+    }, {
+        parent: $headerBottom
+    });
+
+    const genderList = createElement('ul', {
+        className: 'nav__list header__nav-list gender gender_header'
+    }, {
+        parent: headerNav,
+    });
+
+    const categoryList = createElement('ul', {
+        className: 'nav__list header__nav-list category'
+    }, {
+        parent: headerNav,
+    });
+
+    return { $headerBottom, genderList, categoryList };
+};
+
+const $headerTop = renderHeaderTop();
+const { $headerBottom, genderList, categoryList } = renderHeaderBottom();
+
+export function renderHeader() {
+    console.log('renderHeader()');
+
     $header.prepend($headerTop);
+    $header.append($headerBottom);
+}
+
+export default function renderNavigation(gender = 'women') {
+    console.log(`renderNavigation(${gender})`);
+
+    // const pathname = getPathName();
+    // console.log('pathname: ', pathname);
+
+    genderList.textContent = '';
+    categoryList.textContent = '';
+
+    for (const genderName in DATA.navigation) {
+        // const home = pathname === '' && gender === 'women';
+        // const href = `/${gender}`;
+        createElement('li', {
+            className: 'nav__item header__nav-item gender__item',
+        }, {
+            parent: genderList,
+            append: createElement('a', {
+                className:   `link header__link gender__link ${genderName === gender ? 'gender__link_active' : ''}`,
+                href:        `/${genderName}`,
+                textContent: DATA.navigation[genderName].title
+            }, {
+                cb(element){
+                    element.dataset.navigo = true;
+                    router.updatePageLinks();
+                }
+            })
+        });
+    }
+
+    DATA.navigation[gender].list.map(category => {
+        createElement('li', {
+            className: 'nav__item header__nav-item category__item',
+        }, {
+            parent: categoryList,
+            append: createElement('a', {
+                className:   `link header__link category__link ${category.slug === '' ? 'category__link_active' : ''}`,
+                href:        `/${gender}/${category.slug}`,
+                textContent: category.title,
+            }, {
+                cb(element){
+                    element.dataset.navigo = true;
+                    router.updatePageLinks();
+                }
+            })
+        });
+    });
 }

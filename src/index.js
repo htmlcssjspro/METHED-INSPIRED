@@ -1,28 +1,18 @@
 import './index.html';
 import './index.scss';
-import { router } from './modules/router';
-import womenMainPage from './modules/main/women-main-page';
-import menMainPage from './modules/main/men-main-page';
-import renderHome from './modules/render/render-home';
-import renderMain from './modules/render/render-main';
-import renderInit from './modules/render/render-init';
+import routerInit from './modules/router';
+import { API_URL, DATA } from './modules/const';
+import getData from './modules/service/get-data';
+import createCssColors from './modules/create-css-colors';
 
-renderInit();
 
-router.on('*', () => {
-    //
-});
+const init = async () => {
+    DATA.navigation = await getData(`${API_URL}/categories`);
+    DATA.novelties = await getData(`${API_URL}/novelties`);
+    DATA.colors = await getData(`${API_URL}/colors`);
 
-router.on('/', () => {
-    renderHome();
-});
+    createCssColors();
+    routerInit();
+};
 
-router.on('/women', () => {
-    womenMainPage();
-});
-
-router.on('/men', () => {
-    menMainPage();
-});
-
-router.resolve();
+init();
