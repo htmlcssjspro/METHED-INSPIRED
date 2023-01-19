@@ -108,7 +108,7 @@ const $contacts = createElement('div', {
 
 const $copyright = createElement('div', {
     className: 'footer__item footer__item_copyright copyright',
-    innerHTML: '<p>&copy; INSPIRED, 2023</p>',
+    innerHTML: `<p>&copy; INSPIRED, 2022-${new Date().getFullYear()}</p>`,
 }, {
     parent: $footerContainer,
 });
@@ -156,8 +156,18 @@ export default function renderFooter() {
         }, {
             parent: $catalogMainList,
             append: createElement('h3', {
-                className:   'catalog__title',
-                textContent: DATA.navigation[gender].title
+                className: 'catalog__title',
+            }, {
+                append: createElement('a', {
+                    className:   'link footer__link',
+                    href:        `/${gender}`,
+                    textContent: DATA.navigation[gender].title
+                }, {
+                    cb(element){
+                        element.dataset.navigo = true;
+                        router.updatePageLinks();
+                    }
+                })
             })
         });
 
@@ -167,15 +177,14 @@ export default function renderFooter() {
             parent: $catalogMainItem
         });
 
-        DATA.navigation[gender].list.map(category => {
-            const href = `/${gender}/${category.slug}`;
+        DATA.navigation[gender].list.map(category =>
             createElement('li', {
                 className: 'catalog__item',
             }, {
                 parent: $catalogList,
                 append: createElement('a', {
                     className:   'link footer__link',
-                    href,
+                    href:        `/${gender}/${category.slug}`,
                     textContent: category.title,
                 }, {
                     cb(element){
@@ -183,7 +192,6 @@ export default function renderFooter() {
                         router.updatePageLinks();
                     }
                 })
-            });
-        });
+            }));
     }
 }

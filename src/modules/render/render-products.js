@@ -78,8 +78,12 @@ export default async function renderProducts(searchParams = {}) {
                 }, {
                     append: createElement('div', {
                         className: `color color_${color.title} ${i ? '' : 'color_checked'}`,
-                        style:     `background-color: ${color.code}`,
+                        // style:     `background-color: ${color.code}`, // Вариант 1
                         title:     color.title
+                    }, {
+                        cb(element){
+                            element.style.backgroundColor = color.code; // Вариант 2
+                        }
                     })
                 });
 
