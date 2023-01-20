@@ -2,6 +2,7 @@ import { API_HOST, API_URL, DATA } from '../const';
 import createElement from '../service/create-element';
 import getData from '../service/get-data';
 import sprite from '../../img/sprite.svg';
+import renderPagination from './render-pagination';
 
 const $products = document.querySelector('.products');
 
@@ -9,10 +10,13 @@ const $container = createElement('div', {
     className: 'container'
 }, {
     parent: $products,
-    append: createElement('h2', {
-        className:   'products__title',
-        textContent: 'Новинки'
-    })
+});
+
+const $title = createElement('h2', {
+    className:   'products__title',
+    textContent: 'Новинки'
+}, {
+    parent: $container,
 });
 
 const $productsList = createElement('ul', {
@@ -22,16 +26,18 @@ const $productsList = createElement('ul', {
 });
 
 
-export default async function renderProducts(searchParams = {}) {
-    console.log('renderGoods()');
+export default async function renderProducts(searchParams) {
+    console.log('renderGoods()'); // TODO Delete
+    console.log('searchParams: ', searchParams); // TODO Delete
 
-    // searchParams.category ??= 'novelties';
-    // const novelties = DATA.novelties;
+    let response = await getData(`${API_URL}/goods`, searchParams);
+    console.log('response: ', response); // TODO Delete
 
-    const goods = await getData(`${API_URL}/goods`, searchParams);
-    console.log('goods: ', goods);
+    const goods = response.goods ?? response;
 
-    $productsList.textContent = '';
+    const title = DATA.navigation[searchParams.gender].list
+        .find(item => item.slug === searchParams.category)?.title;
+    $title.textContent = title ?? 'Новинки';
 
     const cardList = goods.map(product => {
         const $productsItem = createElement('li', {
@@ -96,7 +102,13 @@ export default async function renderProducts(searchParams = {}) {
         return $productsItem;
     });
 
+    $productsList.textContent = '';
     $productsList.append(...cardList);
+
+    if (response.pages && response.pages > 1) {
+        const { page, pages, totalCount } = response;
+        renderPagination($container, page, pages, totalCount);
+    }
 }
 
 

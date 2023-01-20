@@ -5,6 +5,8 @@ import { API_URL, DATA } from './modules/const';
 import getData from './modules/service/get-data';
 import createCssColors from './modules/create-css-colors';
 import createElement from './modules/service/create-element';
+import { renderHeader } from './modules/render/render-header';
+import renderFooter from './modules/render/render-footer';
 
 
 const init = async () => {
@@ -13,6 +15,8 @@ const init = async () => {
         DATA.novelties = await getData(`${API_URL}/novelties`);
         DATA.colors = await getData(`${API_URL}/colors`);
 
+        renderHeader();
+        renderFooter();
         createCssColors();
         routerInit();
     } catch (error) {

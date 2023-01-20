@@ -1,0 +1,53 @@
+.pagination {
+    & {
+        font-size: 14px;
+        color: $gray;
+
+        @include tablet {
+            font-size: 10px;
+        }
+    }
+
+    &__list {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5em;
+    }
+
+    &__item {
+    }
+
+    &__link {
+        display: block;
+        padding: 0.5em;
+        color: $gray;
+        border-bottom: 1px solid transparent;
+
+        &_active {
+            color: $black;
+            border-bottom-color: $black;
+            pointer-events: none;
+        }
+    }
+
+    &__arrow {
+        & {
+            padding: 0;
+            color: $black;
+        }
+
+        &_prev {
+            margin-right: 2px;
+        }
+
+        &_next {
+            margin-left: 2px;
+        }
+
+        &_disabled {
+            color: $gray;
+            pointer-events: none;
+        }
+    }
+}

@@ -12,13 +12,19 @@ export const router = new Navigo('/', { hash: true });
 
 export default function routerInit() {
     router.on('*', () => {
-        renderHeader();
-        renderFooter();
+        // renderHeader();
+        // renderFooter();
     });
 
     router.on(() => {
         renderGenderMain();
     });
+
+    router.on('search', ({ params }) => {
+        //
+    });
+
+    router.on('/:gender/:category', renderCategoryMain);
 
     for (const gender in DATA.navigation) {
         router.on(`/${gender}`, () => {
@@ -26,8 +32,9 @@ export default function routerInit() {
         });
 
         DATA.navigation[gender].list.map(category => {
-            router.on(`/${gender}/${category.slug}`, () => {
-                renderCategoryMain(category.slug);
+            router.on(`/${gender}/${category.slug}`, (data) => {
+                // renderCategoryMain(category.slug);
+                // renderCategoryMain(data);
             });
         });
     }
