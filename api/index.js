@@ -280,7 +280,41 @@ createServer(async (req, res) => {
     .listen(PORT);
 
 
-export default function handler(req, res) {
-    const { name = 'World' } = req.query;
-    return res.send(`Hello ${name}!`);
-}
+// export default function handler(req, res) {
+//     // req - объект с информацией о запросе, res - объект для управления отправляемым ответом
+//     // чтобы не отклонять uri с img
+//     if (req.url.substring(1, 4) === 'img') {
+//         res.statusCode = 200;
+//         res.setHeader('Content-Type', 'image/jpeg');
+//         readFile(`${__dirname}${req.url}`, (err, image) => {
+//             res.end(image);
+//         });
+//         return;
+//     }
+
+//     // этот заголовок ответа указывает, что тело ответа будет в JSON формате
+//     res.setHeader('Content-Type', 'application/json');
+
+//     // CORS заголовки ответа для поддержки кросс-доменных запросов из браузера
+//     res.setHeader('Access-Control-Allow-Origin', '*');
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+//     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+//     // запрос с методом OPTIONS может отправлять браузер автоматически для проверки CORS заголовков
+//     // в этом случае достаточно ответить с пустым телом и этими заголовками
+//     if (req.method === 'OPTIONS') {
+//     // end = закончить формировать ответ и отправить его клиенту
+//         res.end();
+//         return;
+//     }
+
+//     if (req.url.includes('/api/categories')) {
+//         res.end(JSON.stringify(db.categories));
+//         return;
+//     }
+
+//     if (req.url.includes('/api/colors')) {
+//         res.end(JSON.stringify(db.colors));
+//         return;
+//     }
+// }
