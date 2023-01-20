@@ -1,6 +1,5 @@
-const protocol = window.location.protocol;
-const hostname = window.location.hostname;
-const port = '3001';
+const { protocol, hostname } = window.location;
+const port = '3000';
 export const API_HOST = `${protocol}//${hostname}:${port}`;
 export const API_URL = `${API_HOST}/api`;
 export const PAGINATION_COUNT = 3;

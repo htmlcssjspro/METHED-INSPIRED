@@ -2,8 +2,6 @@ import Navigo from 'navigo';
 import { DATA } from './const';
 import renderCategoryMain from './render/render-category-main';
 import renderGenderMain from './render/render-gender-main';
-import renderFooter from './render/render-footer';
-import { renderHeader } from './render/render-header';
 
 
 export const router = new Navigo('/', { hash: true });
