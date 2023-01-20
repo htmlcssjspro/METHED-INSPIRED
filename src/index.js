@@ -12,7 +12,7 @@ import renderFooter from './modules/render/render-footer';
 const init = async () => {
     try {
         DATA.navigation = await getData(`${API_URL}/categories`);
-        DATA.novelties = await getData(`${API_URL}/novelties`);
+        // DATA.novelties = await getData(`${API_URL}/novelties`);
         DATA.colors = await getData(`${API_URL}/colors`);
 
         renderHeader();

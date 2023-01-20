@@ -1,4 +1,4 @@
-import { DATA } from '../const';
+import { DATA, TITLE } from '../const';
 import { router } from '../router';
 import createElement from '../service/create-element';
 
@@ -47,8 +47,8 @@ export default function renderHero(gender) {
 
     $hero.className = `hero hero_${gender}`;
 
-    $title.textContent = DATA.novelties[gender].title;
-    $link.href = `/products/${DATA.novelties[gender].goodId}`;
+    $title.textContent = TITLE[gender].title;
+    $link.href = `/products/${TITLE[gender].goodId}`;
     router.updatePageLinks();
 }
 
