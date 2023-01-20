@@ -6,7 +6,7 @@ import * as url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const DB_FILE = path.resolve(__dirname, 'db.json');
 const ORDER_FILE = path.resolve(__dirname, 'order.json');
-const PORT = process.env.PORT || 8024;
+const PORT = process.env.PORT || 3001;
 const URI_PREFIX = '/api/goods';
 
 const db = JSON.parse(readFileSync(DB_FILE) || '[]');
