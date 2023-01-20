@@ -54,8 +54,6 @@ jobs:
         run: |
           npm install
           npx webpack --node-env=production
-          cd api_inspired
-          node index
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
