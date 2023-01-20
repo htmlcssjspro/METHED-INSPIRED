@@ -280,41 +280,110 @@ createServer(async (req, res) => {
     .listen(PORT);
 
 
-// export default function handler(req, res) {
-//     // req - объект с информацией о запросе, res - объект для управления отправляемым ответом
-//     // чтобы не отклонять uri с img
-//     if (req.url.substring(1, 4) === 'img') {
-//         res.statusCode = 200;
-//         res.setHeader('Content-Type', 'image/jpeg');
-//         readFile(`${__dirname}${req.url}`, (err, image) => {
-//             res.end(image);
-//         });
-//         return;
-//     }
+export default async function handler(req, res) {
+    // req - объект с информацией о запросе, res - объект для управления отправляемым ответом
+    // чтобы не отклонять uri с img
+    if (req.url.substring(1, 4) === 'img') {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'image/jpeg');
+        readFile(`${__dirname}${req.url}`, (err, image) => {
+            res.end(image);
+        });
+        return;
+    }
 
-//     // этот заголовок ответа указывает, что тело ответа будет в JSON формате
-//     res.setHeader('Content-Type', 'application/json');
+    // этот заголовок ответа указывает, что тело ответа будет в JSON формате
+    res.setHeader('Content-Type', 'application/json');
 
-//     // CORS заголовки ответа для поддержки кросс-доменных запросов из браузера
-//     res.setHeader('Access-Control-Allow-Origin', '*');
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-//     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    // CORS заголовки ответа для поддержки кросс-доменных запросов из браузера
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-//     // запрос с методом OPTIONS может отправлять браузер автоматически для проверки CORS заголовков
-//     // в этом случае достаточно ответить с пустым телом и этими заголовками
-//     if (req.method === 'OPTIONS') {
-//     // end = закончить формировать ответ и отправить его клиенту
-//         res.end();
-//         return;
-//     }
+    // запрос с методом OPTIONS может отправлять браузер автоматически для проверки CORS заголовков
+    // в этом случае достаточно ответить с пустым телом и этими заголовками
+    if (req.method === 'OPTIONS') {
+    // end = закончить формировать ответ и отправить его клиенту
+        res.end();
+        return;
+    }
 
-//     if (req.url.includes('/api/categories')) {
-//         res.end(JSON.stringify(db.categories));
-//         return;
-//     }
+    if (req.url.includes('/api/categories')) {
+        res.end(JSON.stringify(db.categories));
+        return;
+    }
 
-//     if (req.url.includes('/api/colors')) {
-//         res.end(JSON.stringify(db.colors));
-//         return;
-//     }
-// }
+    if (req.url.includes('/api/colors')) {
+        res.end(JSON.stringify(db.colors));
+        return;
+    }
+    try {
+        if (req.method === 'POST' && req.url === '/api/order') {
+            const order = createOrder(await drainJson(req));
+            res.statusCode = 201;
+            res.setHeader('Access-Control-Expose-Headers', 'Location');
+            res.setHeader('Location', `api/order/${order.id}`);
+            res.end(JSON.stringify(order));
+            return;
+        }
+    } catch (err) {
+        console.log('err: ', err);
+        // обрабатываем сгенерированную нами же ошибку
+        if (err instanceof ApiError) {
+            res.writeHead(err.statusCode);
+            res.end(JSON.stringify(err.data));
+        } else {
+            // если что-то пошло не так - пишем об этом в консоль и возвращаем 500 ошибку сервера
+            res.statusCode = 500;
+            res.end(JSON.stringify({ message: 'Server Error' }));
+        }
+    }
+    // если URI не начинается с нужного префикса - можем сразу отдать 404
+    if (!req.url || !req.url.startsWith(URI_PREFIX)) {
+        res.statusCode = 404;
+        res.end(JSON.stringify({ message: 'Not Found' }));
+        return;
+    }
+
+    // убираем из запроса префикс URI, разбиваем его на путь и параметры
+    const [uri, query] = req.url.substring(URI_PREFIX.length).split('?');
+    const queryParams = {};
+    // параметры могут отсутствовать вообще или иметь вид a=b&b=c
+    // во втором случае наполняем объект queryParams { a: 'b', b: 'c' }
+    if (query) {
+        for (const piece of query.split('&')) {
+            const [key, value] = piece.split('=');
+            queryParams[key] = value ? decodeURIComponent(value) : '';
+        }
+    }
+
+    try {
+    // обрабатываем запрос и формируем тело ответа
+
+        const body = await (() => {
+            const postPrefix = uri.substring(1);
+
+            if (req.method !== 'GET') return;
+            if (uri === '' || uri === '/') {
+                // /api/goods
+                return getGoodsList(queryParams);
+            }
+            // /api/goods/{id}
+            // параметр {id} из URI запроса
+
+            return getItems(postPrefix);
+        })();
+        res.end(JSON.stringify(body));
+    } catch (err) {
+        console.log('err: ', err);
+        // обрабатываем сгенерированную нами же ошибку
+        if (err instanceof ApiError) {
+            res.writeHead(err.statusCode);
+            res.end(JSON.stringify(err.data));
+        } else {
+            // если что-то пошло не так - пишем об этом в консоль и возвращаем 500 ошибку сервера
+            res.statusCode = 500;
+            res.end(JSON.stringify({ message: 'Server Error' }));
+        }
+    }
+}
