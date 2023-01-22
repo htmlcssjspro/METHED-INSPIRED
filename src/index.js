@@ -1,19 +1,18 @@
 import './index.html';
 import './index.scss';
 import routerInit from './modules/router';
-import { API_URL, DATA } from './modules/const';
-import getData from './modules/service/get-data';
-import createCssColors from './modules/create-css-colors';
-import createElement from './modules/service/create-element';
-import { renderHeader } from './modules/render/render-header';
-import renderFooter from './modules/render/render-footer';
+import { DATA } from './modules/const';
+import createCssColors from './modules/createCssColors';
+import createElement from './modules/service/createElement';
+import renderHeader from './modules/render/common/renderHeader';
+import renderFooter from './modules/render/common/renderFooter';
+import { getCategories, getColors } from './modules/controllers/apiController';
 
 
 const init = async () => {
     try {
-        DATA.navigation = await getData(`${API_URL}/categories`);
-        // DATA.novelties = await getData(`${API_URL}/novelties`);
-        DATA.colors = await getData(`${API_URL}/colors`);
+        DATA.navigation = await getCategories();
+        DATA.colors = await getColors();
 
         renderHeader();
         renderFooter();

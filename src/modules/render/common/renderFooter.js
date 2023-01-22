@@ -1,6 +1,6 @@
-import { DATA } from '../const';
-import { router } from '../router';
-import createElement from '../service/create-element';
+import { DATA } from '../../const';
+import { router } from '../../router';
+import createElement from '../../service/createElement';
 
 
 const $footer = document.querySelector('.footer');
@@ -10,6 +10,7 @@ const $footerContainer = createElement('div', {
 }, {
     parent: $footer
 });
+
 
 const $catalog = createElement('div', {
     className: 'footer__item footer__item_catalog catalog',

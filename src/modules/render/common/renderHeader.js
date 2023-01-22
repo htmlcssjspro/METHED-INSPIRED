@@ -1,12 +1,12 @@
-import createElement from '../service/create-element';
-import logo from '../../img/logo.svg';
-import { router } from '../router';
-import { DATA } from '../const';
+import createElement from '../../service/createElement';
+import logo from '../../../img/logo.svg';
+import { router } from '../../router';
 
 const $header = document.querySelector('.header');
 
 const $headerSearchButton = createElement('button', {
     className: 'heder__link search-button',
+    title:     'Поиск',
     innerHTML: `
         <svg width="24"
             height="24"
@@ -30,6 +30,7 @@ const $headerSearchButton = createElement('button', {
 const $headerCartLink = createElement('a', {
     className: 'heder__link',
     href:      '/cart',
+    title:     'Корзина',
     innerHTML: `
         <svg width="24"
             height="24"
@@ -48,11 +49,16 @@ const $headerCartLink = createElement('a', {
                 d="M8.25 6.75C8.25 5.75544 8.64509 4.80161 9.34835 4.09835C10.0516 3.39509 11.0054 3 12 3C12.9946 3 13.9484 3.39509 14.6517 4.09835C15.3549 4.80161 15.75 5.75544 15.75 6.75" />
         </svg>
     `,
+}, {
+    cb(element){
+        element.dataset.navigo = true;
+    }
 });
 
 const $headerFavoriteLink = createElement('a', {
     className: 'heder__link',
-    href:      '/favotite',
+    href:      '/favorite',
+    title:     'Избранное',
     innerHTML: `
         <svg width="24"
             height="24"
@@ -67,11 +73,15 @@ const $headerFavoriteLink = createElement('a', {
                 d="M12 20.25C12 20.25 2.625 15 2.625 8.62501C2.62519 7.49826 3.01561 6.40635 3.72989 5.53493C4.44416 4.66351 5.4382 4.06636 6.54299 3.84501C7.64778 3.62367 8.79514 3.79179 9.78999 4.32079C10.7848 4.84979 11.5658 5.70702 12 6.74673L12 6.74673C12.4342 5.70702 13.2152 4.84979 14.21 4.32079C15.2049 3.79179 16.3522 3.62367 17.457 3.84501C18.5618 4.06636 19.5558 4.66351 20.2701 5.53493C20.9844 6.40635 21.3748 7.49826 21.375 8.62501C21.375 15 12 20.25 12 20.25Z" />
         </svg>
     `,
+}, {
+    cb(element){
+        element.dataset.navigo = true;
+    }
 });
 
 const renderHeaderTop = () => {
     const $headerTop = createElement('div', {
-        className: 'container header__container header__container_top',
+        className: 'container header__container header__container_top header__header',
         innerHTML: `
         <a class="link header__link header__phone" href="tel:+79304902620">8 930 490 26 20</a>
         <a class="link header__link header__logo" href="/" data-navigo>
@@ -105,32 +115,6 @@ const renderHeaderTop = () => {
     return $headerTop;
 };
 
-const renderHeaderBottom = () => {
-    const $headerBottom = createElement('div', {
-        className: 'container header__container header__container_bottom',
-    });
-
-    const headerNav = createElement('nav', {
-        className: 'nav header__nav'
-    }, {
-        parent: $headerBottom
-    });
-
-    const genderList = createElement('ul', {
-        className: 'nav__list header__nav-list gender gender_header'
-    }, {
-        parent: headerNav,
-    });
-
-    const categoryList = createElement('ul', {
-        className: 'nav__list header__nav-list category'
-    }, {
-        parent: headerNav,
-    });
-
-    return { $headerBottom, genderList, categoryList };
-};
-
 const renderSearch = () => {
     const $search = createElement('div', {
         className: 'container header__container header__container_search search',
@@ -146,7 +130,8 @@ const renderSearch = () => {
         className:   'search__input',
         type:        'search',
         name:        'search',
-        placeholder: 'Найти...'
+        placeholder: 'Найти...',
+        autofocus:   true,
     }, {
         parent: $searchForm,
     });
@@ -162,84 +147,59 @@ const renderSearch = () => {
     return { $search, $searchForm, $searchInput, $searchButton };
 };
 
+const renderHeaderBottom = () => {
+    const $headerBottom = createElement('div', {
+        className: 'container header__container header__container_bottom header__navigation',
+    });
+
+    const $headerNav = createElement('nav', {
+        className: 'nav header__nav'
+    }, {
+        parent: $headerBottom
+    });
+
+    const $genderList = createElement('ul', {
+        className: 'nav__list header__nav-list gender gender_header'
+    }, {
+        parent: $headerNav,
+    });
+
+    const $categoryList = createElement('ul', {
+        className: 'nav__list header__nav-list category'
+    }, {
+        parent: $headerNav,
+    });
+
+    return { $headerBottom, $headerNav, $genderList, $categoryList };
+};
+
+
 const $headerTop = renderHeaderTop();
-const { $headerBottom, genderList, categoryList } = renderHeaderBottom();
+export const { $headerBottom, $headerNav, $genderList, $categoryList } = renderHeaderBottom();
+
 const { $search, $searchForm, $searchInput, $searchButton } = renderSearch();
 
-const toggleSearch = event => {
+const toggle$search = event => {
     $search.classList.toggle('search_show');
+    $searchInput.focus();
 };
+
 const search = event => {
     event.preventDefault();
-    const form = event.target.closest('.search__form');
-
-    router.navigate(`search?value=${form.search.value}`);
+    if ($searchForm.search.value.trim()) {
+        router.navigate(`search?search=${$searchForm.search.value}`);
+    }
 };
 
-$headerSearchButton.addEventListener('click', toggleSearch, false);
-// $searchButton.addEventListener('click', search, false);
+$headerSearchButton.addEventListener('click', toggle$search, false);
 $searchInput.addEventListener('change', search, false);
 $searchInput.addEventListener('input', search, false);
 $searchForm.addEventListener('submit', search, false);
 
-
-export function renderHeader() {
+export default function renderHeader() {
     console.log('renderHeader()'); // TODO Delete
 
     $header.prepend($headerTop);
+    $header.append($search);
     $header.append($headerBottom);
-    $headerTop.after($search);
-}
-
-export default function renderNavigation(gender = 'women', categoryName = '') {
-    console.log(`renderNavigation(${gender}, ${categoryName})`);
-
-    // const pathname = getPathName();
-    // console.log('pathname: ', pathname);
-
-    genderList.textContent = '';
-    categoryList.textContent = '';
-
-    for (const genderName in DATA.navigation) {
-        // const home = pathname === '' && gender === 'women';
-        // const href = `/${gender}`;
-        createElement('li', {
-            className: 'nav__item header__nav-item gender__item',
-        }, {
-            parent: genderList,
-            append: createElement('a', {
-                className:   `link header__link gender__link ${genderName === gender ? 'gender__link_active' : ''}`,
-                href:        `/${genderName}`,
-                textContent: DATA.navigation[genderName].title
-            }, {
-                cb(element){
-                    element.dataset.navigo = true;
-                    router.updatePageLinks();
-                }
-            })
-        });
-    }
-
-    DATA.navigation[gender].list.map(category => {
-        createElement('li', {
-            className: 'nav__item header__nav-item category__item',
-        }, {
-            parent: categoryList,
-            append: createElement('a', {
-                className:   `link header__link category__link ${category.slug === categoryName ? 'category__link_active' : ''}`,
-                href:        `/${gender}/${category.slug}`,
-                textContent: category.title,
-            }, {
-                cb(element){
-                    element.dataset.navigo = true;
-                    router.updatePageLinks();
-                    element.addEventListener('click', event => {
-                        const active = document.querySelector('.category__link_active');
-                        active?.classList.remove('category__link_active');
-                        event.currentTarget.classList.add('category__link_active');
-                    });
-                }
-            })
-        });
-    });
 }

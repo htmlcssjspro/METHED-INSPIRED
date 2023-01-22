@@ -1,6 +1,6 @@
 import { DATA, TITLE } from '../const';
 import { router } from '../router';
-import createElement from '../service/create-element';
+import createElement from '../service/createElement';
 
 
 const $hero = document.querySelector('.hero');
@@ -35,34 +35,18 @@ const $link = createElement('a', {
     }
 });
 
-export default function renderHero(gender) {
-    console.log(`renderHero(${gender})`); // TODO Delete
+export default function renderHero({ gender, show = true }) {
+    console.log(`renderHero({ gender:${gender}, show:${show} })`); // TODO Delete
 
-    if (!gender) {
+    if (!show) {
         $hero.style.display = 'none';
         return;
     }
 
-    $hero.style.display = '';
-
     $hero.className = `hero hero_${gender}`;
-
     $title.textContent = TITLE[gender].title;
     $link.href = `/products/${TITLE[gender].goodId}`;
     router.updatePageLinks();
-}
 
-// TODO Delete
-const $heroInnerHTML = `
-    <div class="container">
-        <div class="hero__content">
-            <h2 class="hero__title">
-                <span>Новая коллекция</span>
-                <br>
-                <span>Бюстгальтер-балконет</span>
-            </h2>
-            <a class="link hero__link"
-                href="#">Перейти</a>
-        </div>
-    </div>
-`;
+    $hero.style.display = '';
+}
