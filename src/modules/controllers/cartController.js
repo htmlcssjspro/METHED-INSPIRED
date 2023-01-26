@@ -1,28 +1,62 @@
-import renderNavigation from '../render/renderNavigation';
-import renderHero from '../render/renderHero';
-import renderProducts from '../render/products/renderProducts';
-import renderCart from '../render/renderCart';
-import renderCard from '../render/renderCard';
+export const cartGoodsStore = {
+    goods: [],
+    _add(product){
+        if (!this.goods.some(item => item.id === product.id)) {
+            this.goods.push(product);
+        }
+    },
+    add(goods) {
+        if (Array.isArray(goods)) {
+            goods.forEach(product => {
+                this._add(product);
+            });
+        } else {
+            this._add(goods);
+        }
+    },
+    getProduct(id){
+        return this.goods.find(item => item.id === id);
+    },
+};
 
-export default function cartController() {
-    console.log('cartController()');
+export const cartTotalPrice = {
+    $headerCartLink: null,
+    elem:            null,
+    total:           0,
+    calc(elem) {
+        const cartList = getCartList();
+        if (!this.$headerCartLink) {
+            this.$headerCartLink = document.querySelector('.header__link_cart');
+        }
+        this.$headerCartLink.dataset.count = cartList.length;
+        console.log('this.$headerCartLink: ', this.$headerCartLink);
+        this.total = cartList.reduce((acc, item) => {
+            const product = cartGoodsStore.getProduct(item.id);
+            return acc + product.price * item.count;
+        }, 0);
 
-    renderNavigation({ show: false });
-    renderHero({ show: false });
-    renderCard({ show: false });
-    renderProducts({ show: false });
+        if (elem) {
+            this.elem = elem;
+        }
 
-    renderCart({});
-}
-
+        this.elem.innerHTML = `руб&nbsp;${this.total}`;
+    }
+};
 
 export function getCartList() {
     const cartList = localStorage.getItem('cart');
     return cartList ? JSON.parse(cartList) : [];
 }
 
+export function clearCart() {
+    localStorage.removeItem('cart');
+    cartTotalPrice.calc();
+}
+
 function setCartList(cartList) {
+    cartList.sort((a, b) => a.id - b.id);
     localStorage.setItem('cart', JSON.stringify(cartList));
+    cartTotalPrice.calc();
 }
 
 export function addProductToCart(product) {

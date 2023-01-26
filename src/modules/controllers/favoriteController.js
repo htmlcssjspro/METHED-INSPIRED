@@ -1,10 +1,3 @@
-import renderHero from '../render/renderHero';
-import renderCard from '../render/renderCard';
-import renderCart from '../render/renderCart';
-import renderNavigation from '../render/renderNavigation';
-import renderProducts from '../render/products/renderProducts';
-
-
 export function getFavorite() {
     const favoriteList = localStorage.getItem('favorite');
     return favoriteList ? JSON.parse(favoriteList) : [];
@@ -28,32 +21,21 @@ function removeFavorite(id) {
     setFavorite(favoriteList);
 }
 
-export function favoriteController() {
-    console.log('favoriteController()'); // TODO Delete
+export function favoriteInit() {
+    document.body.addEventListener('click', event => {
+        const t = event.target;
+        const $favoriteButton = t.closest('.favorite');
+        const $favoriteActiveButton = t.closest('.favorite_active');
 
-    const list = getFavorite();
+        if ($favoriteActiveButton) {
+            $favoriteActiveButton.classList.remove('favorite_active');
+            removeFavorite($favoriteActiveButton.dataset.id);
+            return;
+        }
 
-    renderHero({ show: false });
-    renderCard({ show: false });
-    renderCart({ show: false });
-
-    renderNavigation({ reset: true });
-    renderProducts({ list, pageName: 'favorite' });
+        if ($favoriteButton) {
+            $favoriteButton.classList.add('favorite_active');
+            addFavorite($favoriteButton.dataset.id);
+        }
+    });
 }
-
-document.body.addEventListener('click', event => {
-    const t = event.target;
-    const $favoriteButton = t.closest('.favorite');
-    const $favoriteActiveButton = t.closest('.favorite_active');
-
-    if ($favoriteActiveButton) {
-        $favoriteActiveButton.classList.remove('favorite_active');
-        removeFavorite($favoriteActiveButton.dataset.id);
-        return;
-    }
-
-    if ($favoriteButton) {
-        $favoriteButton.classList.add('favorite_active');
-        addFavorite($favoriteButton.dataset.id);
-    }
-});

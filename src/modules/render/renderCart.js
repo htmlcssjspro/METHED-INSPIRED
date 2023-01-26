@@ -1,7 +1,8 @@
-import { API_HOST } from '../const';
-import { getOneGoodById } from '../controllers/apiController';
-import { addProductToCart, getCartList, removeProductFromCart } from '../controllers/cartController';
+import { API_HOST, API_URL } from '../const';
+import { addProductToCart, cartGoodsStore, cartTotalPrice, clearCart, getCartList, removeProductFromCart } from '../controllers/cartController';
+import { sendOrder } from '../controllers/orderController';
 import createCount from '../createCount';
+import { router } from '../router';
 import createElement from '../service/createElement';
 
 const $cart = document.querySelector('.cart');
@@ -14,9 +15,7 @@ const $cartContainer = createElement('div', {
 
 const $cartList = createElement('ul', {
     className: 'cart__list'
-}, {
-    parent: $cartContainer
-});
+}, { parent: $cartContainer });
 
 const $cartTotal = createElement('div', {
     className: 'cart__total',
@@ -27,6 +26,7 @@ const $cartTotalPrice = createElement('p', {
     innerHTML: 'руб&nbsp;0'
 }, { parent: $cartTotal });
 
+
 const $orderContainer = createElement('div', {
     className: 'container order__container',
     innerHTML: '<h2 class="order__title">Оформление заказа</h2>'
@@ -34,7 +34,15 @@ const $orderContainer = createElement('div', {
 
 const submitHandler = event => {
     event.preventDefault();
-    console.log('event.currentTarget: ', event.currentTarget);
+    const formData = new FormData(event.currentTarget);
+    const data = Object.fromEntries(formData);
+    data.order = getCartList();
+    if (data.order.length) {
+        sendOrder(data)
+            .then(responseData => {
+                showOrderInfo(responseData);
+            });
+    }
 };
 
 const $orderForm = createElement('form', {
@@ -88,8 +96,119 @@ const $orderButton = createElement('button', {
     parent: $orderForm
 });
 
-const calculateTotalPrice = () => {
-    return '9598';
+const showOrderInfo = (data) => {
+    const $modal = createElement('section', {
+        className: 'modal',
+    }, {
+        parent: document.body,
+        cb($modal) {
+            $modal.addEventListener('click', event => {
+                if (event.target === event.currentTarget) {
+                    event.currentTarget.remove();
+                    router.navigate('/');
+                }
+            });
+        }
+    });
+
+    const $modalBody = createElement('div', {
+        className: 'modal__body',
+    }, { parent: $modal });
+
+    $modalBody.insertAdjacentHTML('beforeend', `
+        <h2 class="modal__title">Заказ оформлен №${data.id}</h2>
+        <p class="modal__description modal__description_thank">Спасибо за выбор нашего магазина!</p>
+        <p class="modal__description">Здесь вы можете посмотреть все детали вашего заказа.</p>
+
+        <ul class="modal__customer-data customer">
+            <li class="customer__item">
+                <span class="customer__item-title">Получатель</span>
+                <span class="customer__item-data">${data.fio}</span>
+            </li>
+
+            ${data.address && `
+                <li class="customer__item">
+                    <span class="customer__item-title">Адрес доставки</span>
+                    <span class="customer__item-data">${data.address}</span>
+                </li>
+            `}
+
+            <li class="customer__item">
+                <span class="customer__item-title">Телефон</span>
+                <span class="customer__item-data">${data.phone}</span>
+            </li>
+
+            ${data.email && `
+                <li class="customer__item">
+                    <span class="customer__item-title">E-mail</span>
+                    <span class="customer__item-data">${data.email}</span>
+                </li>
+            `}
+
+            <li class="customer__item">
+                <span class="customer__item-title">Способ получения</span>
+                <span class="customer__item-data">${{ self: 'Самовывоз', delivery: 'Доставка' }[data.delivery]}</span>
+            </li>
+        </ul>
+    `);
+
+    const $goodsList = createElement('ul', {
+        className: 'modal__goods goods-list',
+    }, {
+        parent: $modalBody,
+        append: data.order.map(item => {
+            const product = cartGoodsStore.getProduct(item.id);
+            return createElement('div', {
+                className: 'goods-list__item',
+            }, {
+                append: [
+                    createElement('img', {
+                        className: 'goods-list__img',
+                        src:       `${API_HOST}/${product.pic}`,
+                        alt:       product.title
+                    }),
+                    createElement('p', {
+                        className:   'goods-list__count',
+                        textContent: `X${item.count}`,
+                    }),
+                ]
+            });
+        })
+    });
+
+    const $total = createElement('div', {
+        className: 'modal__total',
+    }, {
+        parent: $modalBody,
+        append: [
+            createElement('img', {
+                className:   'modal__total-title',
+                textContent: 'Итого:',
+            }),
+            createElement('p', {
+                className: 'modal__total-price',
+                innerHTML: `руб&nbsp;${cartTotalPrice.total}`,
+            }),
+        ]
+    });
+    const $close = createElement('button', {
+        className: 'modal__close',
+        innerHTML: `
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 8L16 16" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M16 8L8 16" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        `
+    }, { parent: $modalBody,
+        cb($close) {
+            $close.addEventListener('click', event => {
+                $modal.remove();
+                router.navigate('/');
+            });
+        }
+    });
+
+    clearCart();
 };
 
 export default async function renderCart({ show = true }) {
@@ -100,8 +219,9 @@ export default async function renderCart({ show = true }) {
     if (!show) return;
 
     $cartList.textContent = '';
-    getCartList().forEach(async product => {
-        const data = await getOneGoodById(product.id);
+    getCartList().forEach(product => {
+        // const data = await getOneGoodById(product.id);
+        const data = cartGoodsStore.getProduct(product.id);
 
         const $cartItem = createElement('li', {
             className: 'cart__item'
@@ -160,13 +280,9 @@ export default async function renderCart({ show = true }) {
                 });
             }
         });
-
-
     });
 
-
-    $cartTotalPrice.innerHTML = `руб&nbsp;${calculateTotalPrice()}`;
-
+    cartTotalPrice.calc($cartTotalPrice);
 
     $cart.append($cartContainer);
     $order.append($orderContainer);

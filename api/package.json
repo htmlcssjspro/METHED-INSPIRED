@@ -1,5 +1,5 @@
 {
-  "name": "technoshopapi",
+  "name": "apiinspired",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,5 +8,6 @@
   },
   "type": "module",
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "engines": { "node": "16.x" }
 }

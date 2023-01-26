@@ -3,9 +3,9 @@ import { DATA } from './const';
 import homePageController from './controllers/homePageController';
 import categoryPageController from './controllers/categoryPageController';
 import searchPageController from './controllers/searchPageController';
-import cartController from './controllers/cartController';
-import { favoriteController } from './controllers/favoriteController';
 import productController from './controllers/productController';
+import cartPageController from './controllers/cartPageController';
+import favoritePageController from './controllers/favoritePageController';
 
 
 export const router = new Navigo('/', { hash: true });
@@ -23,8 +23,8 @@ export default function routerInit() {
     });
 
     router.on('/search', searchPageController);
-    router.on('/cart', cartController);
-    router.on('/favorite', favoriteController);
+    router.on('/cart', cartPageController);
+    router.on('/favorite', favoritePageController);
     router.on('/product/:id', productController);
 
     for (const gender in DATA.navigation) {

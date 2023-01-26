@@ -29,7 +29,7 @@ const $headerSearchButton = createElement('button', {
 });
 
 const $headerCartLink = createElement('a', {
-    className: 'heder__link',
+    className: 'header__link header__link_cart',
     href:      '/cart',
     title:     'Корзина',
     innerHTML: `
@@ -53,6 +53,7 @@ const $headerCartLink = createElement('a', {
 }, {
     cb(element){
         element.dataset.navigo = true;
+        element.dataset.count = 0;
     }
 });
 

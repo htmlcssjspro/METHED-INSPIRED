@@ -7,6 +7,7 @@ import createElement from './modules/service/createElement';
 import renderHeader from './modules/render/common/renderHeader';
 import renderFooter from './modules/render/common/renderFooter';
 import { getCategories, getColors } from './modules/controllers/apiController';
+import { favoriteInit } from './modules/controllers/favoriteController';
 
 
 const init = async () => {
@@ -18,6 +19,7 @@ const init = async () => {
         renderFooter();
         createCssColors();
         routerInit();
+        favoriteInit();
     } catch (error) {
         console.error(error);
         createElement('h2', {

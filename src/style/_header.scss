@@ -94,5 +94,26 @@
         &:hover {
             color: $gray;
         }
+
+        &_cart {
+            position: relative;
+
+            &::after {
+                content: attr(data-count);
+                position: absolute;
+                top: -2px;
+                right: -6px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 18px;
+                height: 18px;
+                font-size: 9px;
+                color: $white;
+                background-color: $black;
+                border: 1px solid $white;
+                border-radius: 50%;
+            }
+        }
     }
 }
