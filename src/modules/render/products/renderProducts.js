@@ -48,7 +48,7 @@ const getTitle = (pageName, gender, category) => {
 
 
 export default async function renderProducts({ gender, category, search, list, page, count = 12, pageName, show = true }) {
-    console.log(`renderProducts({ gender:${gender}, category:${category}, search:${search}, list:${list}, page:${page}, count:${count} })`); // TODO Delete
+    console.log(`renderProducts({ gender:${gender}, category:${category}, search:${search}, list:${list}, page:${page}, count:${count}, pageName:${pageName}, show:${show} })`); // TODO Delete
 
     if (!show) {
         $container.remove();
@@ -56,8 +56,6 @@ export default async function renderProducts({ gender, category, search, list, p
     }
 
     if (!gender && !category && !search && !list) return;
-
-    const favoriteList = getFavorite();
 
     $title.textContent = getTitle(pageName, gender, category);
 
@@ -73,7 +71,7 @@ export default async function renderProducts({ gender, category, search, list, p
     } else if (gender && category) {
         response = await getGoodsByGenderAndCategory(gender, category, page, count);
     } else if (gender) {
-        response = await getGoodsByGender(gender);
+        response = await getGoodsByGender(gender, page, count);
     }
     console.log('renderProducts()::response:', response); // TODO Delete
 
@@ -109,7 +107,7 @@ export default async function renderProducts({ gender, category, search, list, p
                 <div class="product__price-favorite">
                     <p class="product__price">руб ${product.price}</p>
                     <button
-                        class="btn product__favorite ${favoriteList.includes(product.id) ? 'product__favorite_active' : ''}"
+                        class="button product__favorite favorite ${getFavorite().includes(product.id) ? 'favorite_active' : ''}"
                         aria-label="Добавить в избранное"
                         data-id="${product.id}">
                         <svg class="icon icon-favorite" width="24" height="24">
@@ -130,7 +128,7 @@ export default async function renderProducts({ gender, category, search, list, p
                     className: 'product__color-item'
                 }, {
                     append: createElement('div', {
-                        className: `color color_${color.title} ${i ? '' : 'color_checked'}`,
+                        className: `color color_product color_${color.title} ${i ? '' : 'color_checked'}`,
                         // style:     `background-color: ${color.code}`, // Вариант 1
                         title:     color.title
                     }, {
@@ -147,13 +145,17 @@ export default async function renderProducts({ gender, category, search, list, p
 
     $productsList.append(...cardList);
     $container.append($productsList);
-    router.updatePageLinks();
 
     {
         const { page, pages, totalCount } = response;
-        renderPagination($container, page, pages, totalCount);
+        if (pageName === 'product') {
+            renderPagination();
+        } else {
+            renderPagination($container, page, pages, totalCount);
+        }
     }
 
     $products.append($container);
+    router.updatePageLinks();
 
 }

@@ -1,6 +1,7 @@
 import createElement from '../../service/createElement';
 import logo from '../../../img/logo.svg';
 import { router } from '../../router';
+import debounce from '../../service/debounce';
 
 const $header = document.querySelector('.header');
 
@@ -192,8 +193,8 @@ const search = event => {
 };
 
 $headerSearchButton.addEventListener('click', toggle$search, false);
+$searchInput.addEventListener('input', debounce(search), false);
 $searchInput.addEventListener('change', search, false);
-$searchInput.addEventListener('input', search, false);
 $searchForm.addEventListener('submit', search, false);
 
 export default function renderHeader() {

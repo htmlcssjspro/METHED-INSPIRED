@@ -14,5 +14,6 @@ export default async function productController(routerData) {
 
     renderNavigation({ reset: true });
     const { gender, category } = await renderCard({ id });
-    renderProducts({ gender, category, count: 4, pageName: 'product' });
+    // renderProducts({ gender, category, count: 4, pageName: 'product' });
+    renderProducts({ gender, count: 4, pageName: 'product' });
 }

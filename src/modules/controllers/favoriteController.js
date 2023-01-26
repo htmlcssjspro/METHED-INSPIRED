@@ -4,24 +4,6 @@ import renderCart from '../render/renderCart';
 import renderNavigation from '../render/renderNavigation';
 import renderProducts from '../render/products/renderProducts';
 
-const $products = document.querySelector('.products');
-
-$products.addEventListener('click', event => {
-    const t = event.target;
-    const $productFavoriteButton = t.closest('.product__favorite');
-    const $productFavoriteActiveButton = t.closest('.product__favorite_active');
-
-    if ($productFavoriteActiveButton) {
-        $productFavoriteActiveButton.classList.remove('product__favorite_active');
-        removeFavorite($productFavoriteActiveButton.dataset.id);
-        return;
-    }
-
-    if ($productFavoriteButton) {
-        $productFavoriteButton.classList.add('product__favorite_active');
-        addFavorite($productFavoriteButton.dataset.id);
-    }
-});
 
 export function getFavorite() {
     const favoriteList = localStorage.getItem('favorite');
@@ -58,3 +40,20 @@ export function favoriteController() {
     renderNavigation({ reset: true });
     renderProducts({ list, pageName: 'favorite' });
 }
+
+document.body.addEventListener('click', event => {
+    const t = event.target;
+    const $favoriteButton = t.closest('.favorite');
+    const $favoriteActiveButton = t.closest('.favorite_active');
+
+    if ($favoriteActiveButton) {
+        $favoriteActiveButton.classList.remove('favorite_active');
+        removeFavorite($favoriteActiveButton.dataset.id);
+        return;
+    }
+
+    if ($favoriteButton) {
+        $favoriteButton.classList.add('favorite_active');
+        addFavorite($favoriteButton.dataset.id);
+    }
+});

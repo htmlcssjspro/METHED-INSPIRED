@@ -15,14 +15,14 @@ const $paginationListMax = createElement('ul', {
 });
 
 const getPaginationPageUrl = (page) => {
-    let { url, queryString } = router.getCurrentLocation();
-    const searchParams = new URLSearchParams(queryString);
-    searchParams.set('page', page);
-    url += `?${searchParams.toString()}`;
-    return url;
+    let { url } = router.getCurrentLocation();
+    url = url.replace('#/', '');
+    return `${url}?page=${page}`;
 };
 
 export default function renderPagination($parent, page, pages, totalCount) {
+    console.log(`renderPagination($parent:${$parent}, page:${page}, pages:${pages}, totalCount:${totalCount})`);
+
     if (!pages || pages === 1){
         $pagination.remove();
         return;
@@ -45,6 +45,10 @@ export default function renderPagination($parent, page, pages, totalCount) {
                 className:   `link pagination__link ${page === i ? 'pagination__link_active' : ''}`,
                 href:        getPaginationPageUrl(i),
                 textContent: i
+            }, {
+                cb(element) {
+                    element.dataset.navigo = true;
+                }
             })
         });
     }
@@ -55,12 +59,17 @@ export default function renderPagination($parent, page, pages, totalCount) {
         append: createElement('a', {
             className: `link pagination__link pagination__arrow pagination__arrow_prev ${isFirst ? 'pagination__arrow_disabled' : ''}`,
             href:      getPaginationPageUrl(prev),
+            tabIndex:  isFirst ? -1 : 0,
+            ariaLabel: 'Предыдущая страница',
             innerHTML: `
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                         <path d="M14 15.06L10.9096 12L14 8.94L13.0486 8L9 12L13.0486 16L14 15.06Z"/>
                     </svg>
                 `,
-            ariaLabel: 'Предыдущая страница'
+        }, {
+            cb(element) {
+                element.dataset.navigo = true;
+            }
         })
     });
     const $next = createElement('li', {
@@ -69,12 +78,17 @@ export default function renderPagination($parent, page, pages, totalCount) {
         append: createElement('a', {
             className: `link pagination__link pagination__arrow pagination__arrow_next  ${isLast ? 'pagination__arrow_disabled' : ''}`,
             href:      getPaginationPageUrl(next),
+            tabIndex:  isLast ? -1 : 0,
+            ariaLabel: 'Следующая страница',
             innerHTML: `
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                         <path d="M10 15.06L13.0904 12L10 8.94L10.9514 8L15 12L10.9514 16L10 15.06Z"/>
                     </svg>
                 `,
-            ariaLabel: 'Следующая страница'
+        }, {
+            cb(element) {
+                element.dataset.navigo = true;
+            }
         })
     });
 
@@ -83,6 +97,7 @@ export default function renderPagination($parent, page, pages, totalCount) {
 
     $pagination.append($paginationList);
     $parent.append($pagination);
+    router.updatePageLinks();
 
 
     // Max

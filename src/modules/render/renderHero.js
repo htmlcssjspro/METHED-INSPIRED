@@ -7,8 +7,6 @@ const $hero = document.querySelector('.hero');
 
 const $container = createElement('div', {
     className: 'container'
-}, {
-    parent: $hero,
 });
 
 const $content = createElement('div', {
@@ -38,15 +36,13 @@ const $link = createElement('a', {
 export default function renderHero({ gender, show = true }) {
     console.log(`renderHero({ gender:${gender}, show:${show} })`); // TODO Delete
 
-    if (!show) {
-        $hero.style.display = 'none';
-        return;
-    }
+    $container.remove();
+    if (!show) return;
 
     $hero.className = `hero hero_${gender}`;
     $title.textContent = TITLE[gender].title;
     $link.href = `/products/${TITLE[gender].goodId}`;
-    router.updatePageLinks();
 
-    $hero.style.display = '';
+    $hero.append($container);
+    router.updatePageLinks();
 }

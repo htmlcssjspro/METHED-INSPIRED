@@ -52,16 +52,16 @@ async function getGoodsByParams(params) {
     return await getData(`${API_URL}/goods`, params);
 }
 
-export async function getGoodsListById(list) {
-    return await getGoodsByParams({ list });
-}
-
-export async function getGoodsByGender(gender) {
-    return await getGoodsByParams({ gender });
+export async function getGoodsByGender(gender, page = 1, count = 12) {
+    return await getGoodsByParams({ gender, page, count });
 }
 
 export async function getGoodsByGenderAndCategory(gender, category, page = 1, count = 12) {
     return await getGoodsByParams({ gender, category, page, count });
+}
+
+export async function getGoodsListById(list, page = 1, count = 12) {
+    return await getGoodsByParams({ list, page, count });
 }
 
 export async function searchGoods(search, page = 1, count = 12) {

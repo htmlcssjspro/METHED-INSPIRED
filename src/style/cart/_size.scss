@@ -1,9 +1,13 @@
 .size {
   display: block;
   padding: 3px 14px;
-  border: 0.5px solid $main-color;
-  font-weight: 400;
+  border: 0.5px solid $black;
   font-size: 14px;
-  line-height: 17px;
+  font-weight: 400;
   text-transform: uppercase;
+
+  @at-root input:checked + & {
+    color: $white;
+    background-color: $black;
+  }
 }

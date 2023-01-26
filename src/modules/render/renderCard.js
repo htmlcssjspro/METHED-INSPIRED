@@ -1,5 +1,9 @@
-import { API_HOST } from '../const';
+import { API_HOST, DATA } from '../const';
+import sprite from '../../img/sprite.svg';
 import { getOneGoodById } from '../controllers/apiController';
+import { addProductToCart } from '../controllers/cartController';
+import { getFavorite } from '../controllers/favoriteController';
+import { router } from '../router';
 import createElement from '../service/createElement';
 
 const $card = document.querySelector('.card');
@@ -8,133 +12,268 @@ const $container = createElement('div', {
     className: 'container card__container',
 });
 
-const $img = createElement('img', {
-    className: 'card__image',
-    src:       `${API_HOST}/img/8688273634.jpg`,
-    alt:       'Пижама со штанами шелковая',
-}, {
-    parent: $container
-});
+const countController = ($input, $minus, $number, $plus) => {
+    let n = +$input.value;
+    $minus.addEventListener('click', () => {
+        if (n == 1) return;
+        n--;
+        $input.value = n;
+        $number.textContent = n;
+    });
+    $plus.addEventListener('click', () => {
+        n++;
+        $input.value = n;
+        $number.textContent = n;
+    });
+};
+const createCount = () => {
+    const $count = createElement('div', {
+        className: 'card__count count',
+    });
 
-const $content = createElement('form', {
-    className: 'card__image',
-    id:        'order',
-    innerHTML: `
-        <h2 class="card__title">Пижама со штанами шелковая</h2>
-        <p class="card__price">руб 6999</p>
-    `
-}, {
-    parent: $container
-});
+    const $input = createElement('input', {
+        className: 'input-hide count__item count__input',
+        type:      'hidden',
+        name:      'count',
+        value:     1,
+    });
+    const $minus = createElement('button', {
+        className:   'count__item count__minus',
+        type:        'button',
+        textContent: '-',
+    });
+    const $number = createElement('span', {
+        className:   'count__item count__number',
+        textContent: 1,
+    });
+    const $plus = createElement('button', {
+        className:   'count__item count__plus',
+        type:        'button',
+        textContent: '+',
+    });
 
-const $vendorCode = createElement('div', {
-    className: 'card__vendor-code',
-    innerHTML: `
-        <span class="card__subtitle">Артикул</span>
-        <span class="card__id">089083</span>
-        <input type="hidden" name="id" value="089083">
-    `
-}, {
-    parent: $content
-});
+    $count.append($input, $minus, $number, $plus);
+    countController($input, $minus, $number, $plus);
 
-const $color = createElement('div', {
-    className: 'card__color',
-    innerHTML: `
-        <p class="card__subtitle card__color-title">Цвет</p>
-        <div class="card__color-list">
-            <label class="card__color-item color color_black color_checked">
-                <input class="input-hide"
-                        type="radio"
-                        name="color"
-                        value="black"
-                        checked>
-            </label>
-            <label class="card__color-item color color_red">
-                <input class="input-hide"
-                        type="radio"
-                        name="color"
-                        value="red">
-            </label>
-        </div>
-    `
-}, {
-    parent: $content
-});
+    return $count;
+};
 
-const $size = createElement('div', {
-    className: 'card__size',
-    innerHTML: `
-        <p class="card__subtitle card__size-title">Размер</p>
+const inputValidate = event => {
+    const $input = event.target;
+    const validityState = $input.validity;
 
-        <div class="card__size-list">
-            <label class="card__size-item size">
-                <input class="input-hide" type="radio" name="size" value="XS">XS
-            </label>
-            <label class="card__size-item size">
-                <input class="input-hide" type="radio" name="size" value="S">S
-            </label>
-            <label class="card__size-item size">
-                <input class="input-hide" type="radio" name="size" value="M">M
-            </label>
-            <label class="card__size-item size">
-                <input class="input-hide" type="radio" name="size" value="L">L
-            </label>
-            <label class="card__size-item size">
-                <input class="input-hide" type="radio" name="size" value="XL">XL
-            </label>
-        </div>
-    `
-}, {
-    parent: $content
-});
+    if (validityState.valueMissing) {
+        if ($input.name === 'color') {
+            $input.setCustomValidity('Укажите Цвет');
+        } else if ($input.name === 'size') {
+            $input.setCustomValidity('Укажите Размер');
+        }
+    } else if (validityState.valid) {
+        $input.setCustomValidity('');
+    } else {
+        $input.setCustomValidity('');
+    }
 
-const $description = createElement('div', {
-    className: 'card__description',
-    innerHTML: `
-        <p class="card__subtitle card__description-title">Описание</p>
-        <p class="card__description-text">Домашняя женская пижама с сорочкой и штанами из шелка</p>
-    `
-}, {
-    parent: $content
-});
+    let $error;
+    let $list;
+    if ($input.name === 'color') {
+        $list = $input.closest('.card__color-list');
+    }
+    if ($input.name === 'size') {
+        $list = $input.closest('.card__size-list');
+    }
+    const $next = $list.nextElementSibling;
+    if ($next && $next.tagName === 'OUTPUT' && $next.classList.contains('input-error')) {
+        $error = $next;
+    } else {
+        $error = document.createElement('output');
+        $error.className = 'input-error';
+        $error.style.display = 'block';
+        $error.style.color = 'maroon';
+        $list.after($error);
+    }
+    $error.textContent = $input.validationMessage;
+};
 
-const $control = createElement('div', {
-    className: 'card__control',
-    innerHTML: `
-        <div class="card__count count">
-            <button class="count__item count__minus">-</button>
-            <span class="count__item count__number">1</span>
-            <button class="count__item count__plus">+</button>
-            <input type="hidden" name="count" value="1">
-        </div>
-        <button class="card__add-cart button card__button" type="submit">В корзину</button>
-        <button class="card__favorite favorite" aria-label="Добавить в избранное" type="button" data-id="321654">
-            <svg width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" fill="transparent" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    d="M12 20.25C12 20.25 2.625 15 2.625 8.62501C2.62519 7.49826 3.01561 6.40635 3.72989 5.53493C4.44416 4.66351 5.4382 4.06636 6.54299 3.84501C7.64778 3.62367 8.79514 3.79179 9.78999 4.32079C10.7848 4.84979 11.5658 5.70702 12 6.74673L12 6.74673C12.4342 5.70702 13.2152 4.84979 14.21 4.32079C15.2049 3.79179 16.3522 3.62367 17.457 3.84501C18.5618 4.06636 19.5558 4.66351 20.2701 5.53493C20.9844 6.40635 21.3748 7.49826 21.375 8.62501C21.375 15 12 20.25 12 20.25Z"></path>
-            </svg>
-        </button>
-    `
-}, {
-    parent: $content
-});
+const submitHandler = event => {
+    event.preventDefault();
+    const $form = event.currentTarget;
+    if ($form.checkValidity()) {
+        const formData = new FormData($form);
+        const product = Object.fromEntries(formData);
+        addProductToCart(product);
+    }
+};
 
 export default async function renderCard({ id, show = true }) {
     console.log(`renderCard({ id:${id}, show:${show} })`); // TODO Delete
 
-    if (!show) {
-        $container.remove();
-        return;
-    }
-
-    $container.style.display = '';
+    $container.textContent = '';
+    $container.remove();
+    if (!show) return;
 
     let response = await getOneGoodById(id);
     console.log(`renderCard({ id:${id} })::response: `, response); // TODO Delete
 
-    $card.append($container);
+    const { _id, gender, category, title, description, pic, price, materials, colors, size, top } = response;
 
-    const { gender, category } = response;
+    const $img = createElement('img', {
+        className: 'card__image',
+        src:       `${API_HOST}/${pic}`,
+        alt:       title,
+    }, { parent: $container });
+
+    const $content = createElement('form', {
+        className: 'card__content',
+        id:        'order',
+    }, {
+        parent: $container,
+        cb($form){
+            $form.addEventListener('change', inputValidate, false);
+            $form.addEventListener('submit', submitHandler, false);
+        }
+    });
+
+    const $title = createElement('h2', {
+        className:   'card__title',
+        textContent: title,
+    }, { parent: $content });
+
+    const $price = createElement('p', {
+        className: 'card__price',
+        innerHTML: `руб&nbsp;${price}`,
+    }, { parent: $content });
+
+    const $vendorCode = createElement('div', {
+        className: 'card__vendor-code',
+        innerHTML: `
+            <input class="input-hide" type="hidden" name="id" value="${id}"></input>
+            <span class="card__subtitle">Артикул</span>
+            &nbsp;
+            <span class="card__id">${id}</span>
+        `
+    }, { parent: $content });
+
+    const $colorList = createElement('div', {
+        className: 'card__color-list',
+    }, {
+        parent: createElement('div', {
+            className: 'card__color',
+            innerHTML: '<p class="card__subtitle card__color-title">Цвет</p>'
+        }, { parent: $content }),
+        append: colors.map((colorId, i, colors) => {
+            const { title } = DATA.colors.find(color => color.id === colorId);
+            return createElement('div', {
+                className: 'card__color-item',
+            }, {
+                append: [
+                    createElement('input', {
+                        className: 'input-hide',
+                        id:        `color-${title}`,
+                        type:      'radio',
+                        name:      'color',
+                        value:     title,
+                        // checked:   !i,
+                        checked:   i == 0 && colors.length === 1,
+                        required:  true,
+                    }, {
+                        cb($input) {
+                            $input.addEventListener('invalid', inputValidate, false);
+                        }
+                    }),
+                    createElement('label', {
+                        className: `color color_card color_${title}`,
+                        title,
+                    }, {
+                        cb(label){
+                            label.setAttribute('for', `color-${title}`);
+                        }
+                    })
+                ],
+            });
+        })
+    });
+
+    const $sizeList = createElement('div', {
+        className: 'card__size-list',
+    }, {
+        parent: createElement('div', {
+            className: 'card__size',
+            innerHTML: '<p class="card__subtitle card__size-title">Размер</p>'
+        }, { parent: $content }),
+        append: size.map((item, i, size) => {
+            return createElement('div', {
+                className: 'card__size-item',
+            }, {
+                append: [
+                    createElement('input', {
+                        className: 'input-hide size__input',
+                        id:        `size-${item}`,
+                        type:      'radio',
+                        name:      'size',
+                        value:     item,
+                        // checked:   !i,
+                        checked:   i == 0 && size.length === 1,
+                        required:  true,
+                    }, {
+                        cb($input) {
+                            $input.addEventListener('invalid', inputValidate, false);
+                        }
+                    }),
+                    createElement('label', {
+                        className:   'card__size-item size',
+                        textContent: item,
+                    }, {
+                        cb(label){
+                            label.setAttribute('for', `size-${item}`);
+                        }
+                    }),
+                ],
+            });
+        })
+    });
+
+    const $description = createElement('p', {
+        className:   'card__description-text',
+        textContent: description
+    }, {
+        parent: createElement('div', {
+            className: 'card__description',
+            innerHTML: '<p class="card__subtitle card__description-title">Описание</p>'
+        }, { parent: $content })
+    });
+
+    const $control = createElement('div', {
+        className: 'card__control',
+    }, {
+        parent: $content,
+        append: [
+            createCount(),
+            createElement('button', {
+                className:   'button card__add-cart card__button',
+                type:        'submit',
+                textContent: 'В корзину'
+            }),
+            createElement('button', {
+                className: `button card__favorite favorite ${getFavorite().includes(id) ? 'favorite_active' : ''}`,
+                type:      'button',
+                title:     'Добавить в избранное',
+                ariaLabel: 'Добавить в избранное',
+                innerHTML: `
+                    <svg class="icon icon-favorite" width="24" height="24">
+                        <use href="${sprite}#favorite"></use>
+                    </svg>
+                `
+            }, {
+                cb(button){
+                    button.dataset.id = id;
+                }
+            })
+        ]
+    });
+
+    $card.append($container);
+    router.updatePageLinks();
+
     return { gender, category };
 }
