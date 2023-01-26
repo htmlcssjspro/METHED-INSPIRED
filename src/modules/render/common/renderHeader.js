@@ -2,6 +2,7 @@ import createElement from '../../service/createElement';
 import logo from '../../../img/logo.svg';
 import { router } from '../../router';
 import debounce from '../../service/debounce';
+import { cartTotalPrice } from '../../controllers/cartController';
 
 const $header = document.querySelector('.header');
 
@@ -53,7 +54,7 @@ const $headerCartLink = createElement('a', {
 }, {
     cb(element){
         element.dataset.navigo = true;
-        element.dataset.count = 0;
+        // element.dataset.count = 0;
     }
 });
 
@@ -111,7 +112,7 @@ const renderHeaderTop = () => {
             createHeaderNavItem($headerSearchButton),
             createHeaderNavItem($headerCartLink),
             createHeaderNavItem($headerFavoriteLink),
-        ]
+        ],
     });
 
     return $headerTop;
@@ -202,6 +203,7 @@ export default function renderHeader() {
     console.log('renderHeader()'); // TODO Delete
 
     $header.prepend($headerTop);
+    cartTotalPrice.calc();
     $header.append($search);
     $header.append($headerBottom);
 }

@@ -29,17 +29,18 @@ export const cartTotalPrice = {
             this.$headerCartLink = document.querySelector('.header__link_cart');
         }
         this.$headerCartLink.dataset.count = cartList.length;
-        console.log('this.$headerCartLink: ', this.$headerCartLink);
         this.total = cartList.reduce((acc, item) => {
             const product = cartGoodsStore.getProduct(item.id);
-            return acc + product.price * item.count;
+            return acc + product?.price * item.count;
         }, 0);
 
         if (elem) {
             this.elem = elem;
         }
 
-        this.elem.innerHTML = `руб&nbsp;${this.total}`;
+        if (this.elem) {
+            this.elem.innerHTML = `руб&nbsp;${this.total}`;
+        }
     }
 };
 
